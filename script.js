@@ -40,7 +40,7 @@ enterBtn.addEventListener('click', () => {
         setTimeout(() => splashScreen.remove(), 800);
     });
 });
-});
+
 
 // ============================================
 // ANALYTICS TRACKING SYSTEM

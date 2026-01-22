@@ -3,7 +3,11 @@ const splashScreen = document.getElementById('splashScreen');
 const enterBtn = document.getElementById('enterBtn');
 const acceptBtn = document.getElementById('acceptBtn');
 const declineBtn = document.getElementById('declineBtn');
+const foodChoiceModal = document.getElementById('foodChoiceModal');
+const cheeseBtn = document.getElementById('cheeseBtn');
+const foodTourBtn = document.getElementById('foodTourBtn');
 const successModal = document.getElementById('successModal');
+const selectedChoiceText = document.getElementById('selectedChoice');
 const buttonsContainer = document.querySelector('.buttons-container');
 const bgMusic = document.getElementById('bgMusic');
 const musicToggle = document.getElementById('musicToggle');
@@ -140,15 +144,49 @@ function playDeclineSound() {
 // Track decline button click attempts
 let declineAttempts = 0;
 
-// Handle accept button click
+// Handle accept button click - show food choice modal
 acceptBtn.addEventListener('click', () => {
-    trackEvent('accept'); // Track analytics
     playSuccessSound();
-    successModal.classList.add('active');
 
-    // Create confetti effect
+    // Show food choice modal with confetti
+    foodChoiceModal.classList.add('active');
     createConfetti();
 });
+
+// Handle cheese pasta choice
+cheeseBtn.addEventListener('click', () => {
+    handleFoodChoice('Cheese Pasta');
+});
+
+// Handle food tour choice
+foodTourBtn.addEventListener('click', () => {
+    handleFoodChoice('Food Tour Quận 5');
+});
+
+// Function to handle food choice
+function handleFoodChoice(choice) {
+    // Track accept with food choice
+    const analytics = getAnalytics();
+    const event = {
+        type: 'accept',
+        timestamp: new Date().toISOString(),
+        date: new Date().toLocaleString('vi-VN'),
+        foodChoice: choice
+    };
+    analytics.accepts.push(event);
+    saveAnalytics(analytics);
+    console.log(`📊 Tracked: accept with choice "${choice}"`, event);
+
+    // Hide food choice modal
+    foodChoiceModal.classList.remove('active');
+
+    // Show final success modal with choice
+    selectedChoiceText.textContent = `Bạn đã chọn: ${choice} 🎉`;
+    successModal.classList.add('active');
+
+    // Play sound
+    playSuccessSound();
+}
 
 // Handle decline button - make it run away!
 declineBtn.addEventListener('mouseenter', () => {

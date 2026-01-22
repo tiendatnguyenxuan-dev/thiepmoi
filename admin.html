@@ -207,6 +207,17 @@
             </div>
         </div>
 
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-label">🧀 Cheese Pasta</div>
+                <div class="stat-number" style="color: #ffa726;" id="cheeseCount">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">🍜 Food Tour Q5</div>
+                <div class="stat-number" style="color: #26c6da;" id="foodTourCount">0</div>
+            </div>
+        </div>
+
         <div class="actions">
             <button class="btn-export" onclick="exportToExcel()">
                 📥 Xuất Excel
@@ -241,6 +252,12 @@
             document.getElementById('acceptsCount').textContent = analytics.accepts.length;
             document.getElementById('declinesCount').textContent = analytics.declines.length;
 
+            // Count food choices
+            const cheeseCount = analytics.accepts.filter(e => e.foodChoice === 'Cheese Pasta').length;
+            const foodTourCount = analytics.accepts.filter(e => e.foodChoice === 'Food Tour Quận 5').length;
+            document.getElementById('cheeseCount').textContent = cheeseCount;
+            document.getElementById('foodTourCount').textContent = foodTourCount;
+
             // Combine all events and sort by timestamp
             const allEvents = [
                 ...analytics.accepts.map(e => ({ ...e, action: 'Đồng Ý 💖' })),
@@ -268,6 +285,7 @@
                         <tr>
                             <th>#</th>
                             <th>Hành Động</th>
+                            <th>Lựa Chọn Món Ăn</th>
                             <th>Thời Gian</th>
                         </tr>
                     </thead>
@@ -276,6 +294,7 @@
                             <tr>
                                 <td>${index + 1}</td>
                                 <td>${event.action}</td>
+                                <td>${event.foodChoice || '-'}</td>
                                 <td>${event.date}</td>
                             </tr>
                         `).join('')}
@@ -300,9 +319,9 @@
             }
 
             // Create CSV content
-            let csv = 'STT,Hành Động,Thời Gian\n';
+            let csv = 'STT,Hành Động,Lựa Chọn Món Ăn,Thời Gian\n';
             allEvents.forEach((event, index) => {
-                csv += `${index + 1},"${event.action}","${event.date}"\n`;
+                csv += `${index + 1},"${event.action}","${event.foodChoice || '-'}","${event.date}"\n`;
             });
 
             // Add summary at the end

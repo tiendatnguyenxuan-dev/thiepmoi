@@ -78,12 +78,33 @@
         </div>
     </div>
 
-    <!-- Success modal -->
+    <!-- Food Choice Modal -->
+    <div class="modal" id="foodChoiceModal">
+        <div class="modal-content food-choice">
+            <div class="celebration">🎉</div>
+            <h2>Tuyệt vời! Chọn địa điểm nhé! 🍴</h2>
+            <p class="modal-subtitle">Bạn muốn đi đâu nào?</p>
+            <div class="food-options">
+                <button class="food-btn" id="cheeseBtn">
+                    <span class="food-icon">🧀</span>
+                    <span class="food-name">Cheese Pasta</span>
+                    <span class="food-desc">Pasta phô mai thơm ngon</span>
+                </button>
+                <button class="food-btn" id="foodTourBtn">
+                    <span class="food-icon">🍜</span>
+                    <span class="food-name">Food Tour Q5</span>
+                    <span class="food-desc">Khám phá ẩm thực Quận 5</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Final Success Modal -->
     <div class="modal" id="successModal">
         <div class="modal-content">
-            <div class="celebration">🎉</div>
-            <h2>Yayyy! 💖</h2>
-            <p>Bạn đã đồng ý rồi!</p>
+            <div class="celebration">💖</div>
+            <h2>Hẹn gặp lại bạn!</h2>
+            <p id="selectedChoice" class="selected-choice"></p>
             <p class="modal-subtitle">Mình sẽ liên lạc với bạn sớm nhất nhé! 🥰</p>
         </div>
     </div>

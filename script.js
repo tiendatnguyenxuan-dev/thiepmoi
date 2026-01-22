@@ -40,8 +40,50 @@ enterBtn.addEventListener('click', () => {
         setTimeout(() => splashScreen.remove(), 800);
     });
 });
+});
 
-// Music toggle functionality
+// ============================================
+// ANALYTICS TRACKING SYSTEM
+// ============================================
+
+const ANALYTICS_KEY = 'invitation_analytics';
+
+function getAnalytics() {
+    const data = localStorage.getItem(ANALYTICS_KEY);
+    return data ? JSON.parse(data) : { accepts: [], declines: [], visits: [] };
+}
+
+function saveAnalytics(data) {
+    localStorage.setItem(ANALYTICS_KEY, JSON.stringify(data));
+}
+
+function trackEvent(eventType) {
+    const analytics = getAnalytics();
+    const event = {
+        type: eventType,
+        timestamp: new Date().toISOString(),
+        date: new Date().toLocaleString('vi-VN')
+    };
+
+    if (eventType === 'accept') {
+        analytics.accepts.push(event);
+    } else if (eventType === 'decline') {
+        analytics.declines.push(event);
+    } else if (eventType === 'visit') {
+        analytics.visits.push(event);
+    }
+
+    saveAnalytics(analytics);
+    console.log(`📊 Tracked: ${eventType}`, event);
+}
+
+// Track page visit on load
+trackEvent('visit');
+
+// ============================================
+// MUSIC TOGGLE
+// ============================================
+
 musicToggle.addEventListener('click', (e) => {
     e.stopPropagation();
     if (isMusicPlaying) {
@@ -100,6 +142,7 @@ let declineAttempts = 0;
 
 // Handle accept button click
 acceptBtn.addEventListener('click', () => {
+    trackEvent('accept'); // Track analytics
     playSuccessSound();
     successModal.classList.add('active');
 
@@ -109,12 +152,14 @@ acceptBtn.addEventListener('click', () => {
 
 // Handle decline button - make it run away!
 declineBtn.addEventListener('mouseenter', () => {
+    trackEvent('decline'); // Track analytics
     playDeclineSound();
     moveDeclineButton();
 });
 
 declineBtn.addEventListener('click', (e) => {
     e.preventDefault();
+    trackEvent('decline'); // Track analytics
     playDeclineSound();
     moveDeclineButton();
 });

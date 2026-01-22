@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lời Mời Đặc Biệt 💖</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- Background Music -->
+    <audio id="bgMusic" loop autoplay muted>
+        <!-- In Love - Low G -->
+        <source src="inlove.mp3" type="audio/mpeg">
+        <!-- Backup song -->
+        <source src="https://assets.mixkit.co/music/preview/mixkit-romantic-piano-115.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Music Toggle Button -->
+    <button class="music-toggle" id="musicToggle" title="Bật/Tắt nhạc">
+        🔊
+    </button>
+
+    <div class="container">
+        <!-- Floating hearts animation -->
+        <div class="hearts">
+            <div class="heart"></div>
+            <div class="heart"></div>
+            <div class="heart"></div>
+            <div class="heart"></div>
+            <div class="heart"></div>
+        </div>
+
+        <!-- Main invitation card -->
+        <div class="invitation-card">
+            <div class="emoji-top">✨</div>
+
+            <h1 class="title">Lời Mời Đặc Biệt</h1>
+
+            <div class="message">
+                <p>Bạn oiiiii</p>
+                <p class="main-text">Liệu cuối tuần này bạn có thể đi chơi với mình không 💕</p>
+                <p class="signature">Với tất cả sự chân thành...</p>
+            </div>
+
+            <div class="buttons-container">
+                <button class="btn btn-accept" id="acceptBtn">
+                    Đồng ý (Ăduu) 💖
+                </button>
+                <button class="btn btn-decline" id="declineBtn">
+                    Từ chối 🙈
+                </button>
+            </div>
+
+            <div class="sparkles">
+                <span class="sparkle">✨</span>
+                <span class="sparkle">💫</span>
+                <span class="sparkle">⭐</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success modal -->
+    <div class="modal" id="successModal">
+        <div class="modal-content">
+            <div class="celebration">🎉</div>
+            <h2>Yayyy! 💖</h2>
+            <p>Bạn đã đồng ý rồi!</p>
+            <p class="modal-subtitle">Mình sẽ liên lạc với bạn sớm nhất nhé! 🥰</p>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>

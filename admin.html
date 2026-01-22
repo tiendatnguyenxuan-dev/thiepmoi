@@ -236,50 +236,59 @@
         </div>
     </div>
 
-    <script>
-        const ANALYTICS_KEY = 'invitation_analytics';
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
-        function getAnalytics() {
-            const data = localStorage.getItem(ANALYTICS_KEY);
-            return data ? JSON.parse(data) : { accepts: [], declines: [], visits: [] };
-        }
+    <!-- Firebase Config -->
+    <script src="firebase-config.js"></script>
+
+    <script>
+        // Firebase database reference
+        const analyticsRef = database.ref('analytics');
 
         function updateDashboard() {
-            const analytics = getAnalytics();
+            analyticsRef.once('value', (snapshot) => {
+                const data = snapshot.val() || { accepts: {}, declines: {}, visits: {} };
 
-            // Update stats
-            document.getElementById('visitsCount').textContent = analytics.visits.length;
-            document.getElementById('acceptsCount').textContent = analytics.accepts.length;
-            document.getElementById('declinesCount').textContent = analytics.declines.length;
+                // Convert Firebase objects to arrays
+                const accepts = Object.values(data.accepts || {});
+                const declines = Object.values(data.declines || {});
+                const visits = Object.values(data.visits || {});
 
-            // Count food choices
-            const cheeseCount = analytics.accepts.filter(e => e.foodChoice === 'Cheese Pasta').length;
-            const foodTourCount = analytics.accepts.filter(e => e.foodChoice === 'Food Tour Quận 5').length;
-            document.getElementById('cheeseCount').textContent = cheeseCount;
-            document.getElementById('foodTourCount').textContent = foodTourCount;
+                // Update stats
+                document.getElementById('visitsCount').textContent = visits.length;
+                document.getElementById('acceptsCount').textContent = accepts.length;
+                document.getElementById('declinesCount').textContent = declines.length;
 
-            // Combine all events and sort by timestamp
-            const allEvents = [
-                ...analytics.accepts.map(e => ({ ...e, action: 'Đồng Ý 💖' })),
-                ...analytics.declines.map(e => ({ ...e, action: 'Từ Chối 🙈' })),
-                ...analytics.visits.map(e => ({ ...e, action: 'Truy Cập 👁️' }))
-            ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                // Count food choices
+                const cheeseCount = accepts.filter(e => e.foodChoice === 'Cheese Pasta').length;
+                const foodTourCount = accepts.filter(e => e.foodChoice === 'Food Tour Quận 5').length;
+                document.getElementById('cheeseCount').textContent = cheeseCount;
+                document.getElementById('foodTourCount').textContent = foodTourCount;
 
-            // Render table
-            const tableContainer = document.getElementById('tableContainer');
+                // Combine all events and sort by timestamp
+                const allEvents = [
+                    ...accepts.map(e => ({ ...e, action: 'Đồng Ý 💖' })),
+                    ...declines.map(e => ({ ...e, action: 'Từ Chối 🙈' })),
+                    ...visits.map(e => ({ ...e, action: 'Truy Cập 👁️' }))
+                ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-            if (allEvents.length === 0) {
-                tableContainer.innerHTML = `
+                // Render table
+                const tableContainer = document.getElementById('tableContainer');
+
+                if (allEvents.length === 0) {
+                    tableContainer.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-state-icon">📭</div>
                         <h3>Chưa có dữ liệu</h3>
                         <p>Khi có người tương tác với thiệp, dữ liệu sẽ hiển thị ở đây</p>
                     </div>
                 `;
-                return;
-            }
+                    return;
+                }
 
-            tableContainer.innerHTML = `
+                tableContainer.innerHTML = `
                 <table>
                     <thead>
                         <tr>
@@ -301,54 +310,63 @@
                     </tbody>
                 </table>
             `;
+            });
         }
 
         function exportToExcel() {
-            const analytics = getAnalytics();
+            analyticsRef.once('value', (snapshot) => {
+                const data = snapshot.val() || { accepts: {}, declines: {}, visits: {} };
 
-            // Combine all events
-            const allEvents = [
-                ...analytics.accepts.map(e => ({ ...e, action: 'Đồng Ý' })),
-                ...analytics.declines.map(e => ({ ...e, action: 'Từ Chối' })),
-                ...analytics.visits.map(e => ({ ...e, action: 'Truy Cập' }))
-            ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+                // Convert Firebase objects to arrays
+                const accepts = Object.values(data.accepts || {});
+                const declines = Object.values(data.declines || {});
+                const visits = Object.values(data.visits || {});
 
-            if (allEvents.length === 0) {
-                alert('Chưa có dữ liệu để xuất!');
-                return;
-            }
+                // Combine all events
+                const allEvents = [
+                    ...accepts.map(e => ({ ...e, action: 'Đồng Ý' })),
+                    ...declines.map(e => ({ ...e, action: 'Từ Chối' })),
+                    ...visits.map(e => ({ ...e, action: 'Truy Cập' }))
+                ].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
 
-            // Create CSV content
-            let csv = 'STT,Hành Động,Lựa Chọn Món Ăn,Thời Gian\n';
-            allEvents.forEach((event, index) => {
-                csv += `${index + 1},"${event.action}","${event.foodChoice || '-'}","${event.date}"\n`;
+                if (allEvents.length === 0) {
+                    alert('Chưa có dữ liệu để xuất!');
+                    return;
+                }
+
+                // Create CSV content
+                let csv = 'STT,Hành Động,Lựa Chọn Món Ăn,Thời Gian\n';
+                allEvents.forEach((event, index) => {
+                    csv += `${index + 1},"${event.action}","${event.foodChoice || '-'}","${event.date}"\n`;
+                });
+
+                // Add summary at the end
+                csv += '\n\nTÓM TẮT\n';
+                csv += `Tổng Lượt Xem,${visits.length}\n`;
+                csv += `Tổng Đồng Ý,${accepts.length}\n`;
+                csv += `Tổng Từ Chối,${declines.length}\n`;
+
+                // Download CSV file
+                const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+                const link = document.createElement('a');
+                const url = URL.createObjectURL(blob);
+                link.setAttribute('href', url);
+                link.setAttribute('download', `thiepmoi_analytics_${new Date().toISOString().split('T')[0]}.csv`);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+                console.log('✅ Exported analytics to CSV');
             });
-
-            // Add summary at the end
-            csv += '\n\nTÓM TẮT\n';
-            csv += `Tổng Lượt Xem,${analytics.visits.length}\n`;
-            csv += `Tổng Đồng Ý,${analytics.accepts.length}\n`;
-            csv += `Tổng Từ Chối,${analytics.declines.length}\n`;
-
-            // Download CSV file
-            const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            const url = URL.createObjectURL(blob);
-            link.setAttribute('href', url);
-            link.setAttribute('download', `thiepmoi_analytics_${new Date().toISOString().split('T')[0]}.csv`);
-            link.style.visibility = 'hidden';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-
-            console.log('✅ Exported analytics to CSV');
         }
 
         function clearData() {
             if (confirm('Bạn có chắc muốn xóa toàn bộ dữ liệu? Hành động này không thể hoàn tác!')) {
-                localStorage.removeItem(ANALYTICS_KEY);
-                updateDashboard();
-                alert('Đã xóa dữ liệu thành công!');
+                analyticsRef.remove().then(() => {
+                    updateDashboard();
+                    alert('Đã xóa dữ liệu thành công!');
+                });
             }
         }
 

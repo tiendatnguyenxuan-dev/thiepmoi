@@ -47,38 +47,30 @@ enterBtn.addEventListener('click', () => {
 
 
 // ============================================
-// ANALYTICS TRACKING SYSTEM
+// ANALYTICS TRACKING SYSTEM (Firebase)
 // ============================================
 
-const ANALYTICS_KEY = 'invitation_analytics';
+// Firebase database reference
+const analyticsRef = database.ref('analytics');
 
-function getAnalytics() {
-    const data = localStorage.getItem(ANALYTICS_KEY);
-    return data ? JSON.parse(data) : { accepts: [], declines: [], visits: [] };
-}
-
-function saveAnalytics(data) {
-    localStorage.setItem(ANALYTICS_KEY, JSON.stringify(data));
-}
-
+// Track event to Firebase
 function trackEvent(eventType) {
-    const analytics = getAnalytics();
     const event = {
         type: eventType,
         timestamp: new Date().toISOString(),
         date: new Date().toLocaleString('vi-VN')
     };
 
+    // Push event to Firebase based on type
     if (eventType === 'accept') {
-        analytics.accepts.push(event);
+        analyticsRef.child('accepts').push(event);
     } else if (eventType === 'decline') {
-        analytics.declines.push(event);
+        analyticsRef.child('declines').push(event);
     } else if (eventType === 'visit') {
-        analytics.visits.push(event);
+        analyticsRef.child('visits').push(event);
     }
 
-    saveAnalytics(analytics);
-    console.log(`📊 Tracked: ${eventType}`, event);
+    console.log(`📊 Tracked to Firebase: ${eventType}`, event);
 }
 
 // Track page visit on load
@@ -165,17 +157,17 @@ foodTourBtn.addEventListener('click', () => {
 
 // Function to handle food choice
 function handleFoodChoice(choice) {
-    // Track accept with food choice
-    const analytics = getAnalytics();
+    // Track accept with food choice to Firebase
     const event = {
         type: 'accept',
         timestamp: new Date().toISOString(),
         date: new Date().toLocaleString('vi-VN'),
         foodChoice: choice
     };
-    analytics.accepts.push(event);
-    saveAnalytics(analytics);
-    console.log(`📊 Tracked: accept with choice "${choice}"`, event);
+
+    // Push to Firebase
+    analyticsRef.child('accepts').push(event);
+    console.log(`📊 Tracked to Firebase: accept with choice "${choice}"`, event);
 
     // Hide food choice modal
     foodChoiceModal.classList.remove('active');

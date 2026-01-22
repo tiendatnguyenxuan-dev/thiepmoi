@@ -1,4 +1,6 @@
 // Get elements
+const splashScreen = document.getElementById('splashScreen');
+const enterBtn = document.getElementById('enterBtn');
 const acceptBtn = document.getElementById('acceptBtn');
 const declineBtn = document.getElementById('declineBtn');
 const successModal = document.getElementById('successModal');
@@ -9,37 +11,33 @@ const musicToggle = document.getElementById('musicToggle');
 // Music state
 let isMusicPlaying = false;
 
-// Autoplay workaround: Start muted, then unmute
-window.addEventListener('load', () => {
-    console.log('🎵 Initializing autoplay music...');
+// Splash screen enter button - this ensures music plays on ALL browsers
+enterBtn.addEventListener('click', () => {
+    console.log('🎵 User clicked Enter - Starting music...');
 
-    // Music is already playing muted due to autoplay attribute
-    // Now we'll unmute it after a short delay
-    setTimeout(() => {
-        bgMusic.muted = false;
-        bgMusic.volume = 0.3; // 30% volume for gentle background music
+    // Unmute and play music
+    bgMusic.muted = false;
+    bgMusic.volume = 0.3;
+
+    bgMusic.play().then(() => {
         isMusicPlaying = true;
         musicToggle.textContent = '🔊';
         musicToggle.classList.remove('muted');
-        console.log('✅ Music playing automatically! 🎵');
-    }, 500); // Short delay to ensure browser has started playback
+        console.log('✅ Music started successfully! 🎵');
 
-    // Fallback: If autoplay failed, try playing manually
-    bgMusic.play().catch(err => {
-        console.log('⚠️ Autoplay prevented, waiting for user interaction...');
-        // Fallback to click event
-        document.addEventListener('click', () => {
-            if (!isMusicPlaying) {
-                bgMusic.muted = false;
-                bgMusic.volume = 0.3;
-                bgMusic.play().then(() => {
-                    isMusicPlaying = true;
-                    musicToggle.textContent = '🔊';
-                    musicToggle.classList.remove('muted');
-                    console.log('✅ Music started after user click! 🎵');
-                }).catch(e => console.error('Failed to play:', e));
-            }
-        }, { once: true });
+        // Hide splash screen with fade out
+        splashScreen.classList.add('hidden');
+
+        // Remove splash from DOM after transition
+        setTimeout(() => {
+            splashScreen.remove();
+        }, 800);
+
+    }).catch(err => {
+        console.error('Failed to play music:', err);
+        // Still hide splash even if music fails
+        splashScreen.classList.add('hidden');
+        setTimeout(() => splashScreen.remove(), 800);
     });
 });
 

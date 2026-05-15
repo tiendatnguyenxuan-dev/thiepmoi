@@ -6,6 +6,7 @@ const declineBtn = document.getElementById('declineBtn');
 const foodChoiceModal = document.getElementById('foodChoiceModal');
 const cheeseBtn = document.getElementById('cheeseBtn');
 const foodTourBtn = document.getElementById('foodTourBtn');
+const bothBtn = document.getElementById('bothBtn');
 const successModal = document.getElementById('successModal');
 const selectedChoiceText = document.getElementById('selectedChoice');
 const buttonsContainer = document.querySelector('.buttons-container');
@@ -152,7 +153,12 @@ cheeseBtn.addEventListener('click', () => {
 
 // Handle food tour choice
 foodTourBtn.addEventListener('click', () => {
-    handleFoodChoice('Food Tour Quận 5');
+    handleFoodChoice('Xem phimmm');
+});
+
+// Handle both choice
+bothBtn.addEventListener('click', () => {
+    handleFoodChoice('Cả haiii luôn');
 });
 
 // Function to handle food choice

@@ -599,6 +599,11 @@ body {
     color: #fff;
 }
 
+.food-btn:nth-child(3) {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: #fff;
+}
+
 .food-btn:hover {
     transform: translateY(-8px) scale(1.05);
     box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
